@@ -37,7 +37,7 @@ export function useKeys(bindings: KeyMap, options: UseKeysOptions = {}) {
     }
     
     // Register this component with the keyboard engine
-    const epoch = registerComponent(idRef.current, bindingsRef);
+    registerComponent(idRef.current, bindingsRef);
     
     // Unregister on unmount or when active changes
     return () => {
