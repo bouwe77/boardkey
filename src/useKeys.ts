@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useId } from 'react';
 import { useKeyboardContext } from './KeyboardProvider';
 import { KeyMap, UseKeysOptions } from './types';
-
-let componentIdCounter = 0;
 
 /**
  * useKeys - Hook for registering keybindings with the TUI engine
@@ -28,8 +26,8 @@ export function useKeys(bindings: KeyMap, options: UseKeysOptions = {}) {
     bindingsRef.current = bindings;
   }, [bindings]);
   
-  // Generate a unique ID for this component
-  const idRef = useRef<string>(`component-${componentIdCounter++}`);
+  // Generate a unique ID for this component using React's useId (safe for concurrent rendering)
+  const id = useId();
   
   useEffect(() => {
     if (!active) {
@@ -37,11 +35,11 @@ export function useKeys(bindings: KeyMap, options: UseKeysOptions = {}) {
     }
     
     // Register this component with the keyboard engine
-    registerComponent(idRef.current, bindingsRef);
+    registerComponent(id, bindingsRef);
     
     // Unregister on unmount or when active changes
     return () => {
-      unregisterComponent(idRef.current);
+      unregisterComponent(id);
     };
-  }, [active, registerComponent, unregisterComponent]);
+  }, [active, registerComponent, unregisterComponent, id]);
 }

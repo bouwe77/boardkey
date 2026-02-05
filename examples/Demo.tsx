@@ -16,9 +16,7 @@ function TextInput() {
   const [isActive, setIsActive] = useState(false);
   
   // Use mute mode when the input is active
-  if (isActive) {
-    useMute();
-  }
+  useMute(isActive);
   
   // Register escape key to exit input mode
   useKeys({

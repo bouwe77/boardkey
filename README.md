@@ -108,9 +108,8 @@ The `useMute` hook enables "mute mode" for text inputs:
 function TextInput() {
   const [isEditing, setIsEditing] = useState(false);
   
-  if (isEditing) {
-    useMute(); // Enable mute mode
-  }
+  // Enable mute mode when editing
+  useMute(isEditing);
   
   useKeys({
     'escape': () => setIsEditing(false),
@@ -159,8 +158,10 @@ interface UseKeysOptions {
 ### useMute
 
 ```tsx
-function useMute(): void
+function useMute(active?: boolean): void
 ```
+
+Enables "mute mode" when `active` is true (default). In mute mode, only the component with the highest epoch can handle keyboard events.
 
 ### getEventString
 

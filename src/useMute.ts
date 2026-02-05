@@ -9,17 +9,22 @@ import { useKeyboardContext } from './KeyboardProvider';
  * - This allows text inputs to work while still allowing escape keys
  * 
  * Typically used by components that render <input> or <textarea>
+ * 
+ * @param active - Whether mute mode should be active (default: true)
  */
-export function useMute() {
+export function useMute(active: boolean = true) {
   const { setIsMuted } = useKeyboardContext();
   
   useEffect(() => {
-    // Enable mute mode on mount
-    setIsMuted(true);
-    
-    // Disable mute mode on unmount
-    return () => {
-      setIsMuted(false);
-    };
-  }, [setIsMuted]);
+    if (active) {
+      // Enable mute mode
+      setIsMuted(true);
+      
+      // Disable mute mode on cleanup
+      return () => {
+        setIsMuted(false);
+      };
+    }
+    // Note: No cleanup needed when active is false - mute mode remains disabled
+  }, [setIsMuted, active]);
 }
