@@ -1,7 +1,7 @@
 {
   "name": "boardkey",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Keyboard handling for React: priority-based keybindings with nested scopes and a mute mode for text input",
   "main": "./dist/index.js",
