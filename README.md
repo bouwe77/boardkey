@@ -1,45 +1,52 @@
-# React TUI
+# boardkey
 
-A React-based Text User Interface (TUI) emulator that provides a keyboard-driven interface with support for nested components, overlapping keybindings, and a "Mute" mode for text entry.
+Keyboard handling for React. It gives you keybindings that respect nesting, so a
+modal or a panel can take over keys from the screen behind it, and a mute mode so
+text inputs keep working.
+
+This library **only handles keyboard input**. It renders no UI and ships no styles.
+What your app looks like is up to you.
 
 ## Features
 
-- 🎯 **Priority Epoch System**: Nested components with automatic priority resolution
-- ⌨️ **Keyboard-Driven**: Single event listener with efficient key normalization
-- 🔇 **Mute Mode**: Special mode for text inputs while preserving escape keys
-- 🔄 **Hot-Swappable Handlers**: Uses refs to avoid re-registration when handlers change
-- 🎨 **TUI Styling**: Monospaced fonts and fluid layouts out of the box
+- **Priority Epoch System**: Nested components with automatic priority resolution
+- **Single Event Listener**: One `keydown` listener with efficient key normalization
+- **Mute Mode**: Special mode for text inputs while preserving escape keys
+- **Hot-Swappable Handlers**: Uses refs to avoid re-registration when handlers change
+- **No UI, No Styles**: Keyboard logic only, so it fits any styling approach
 
 ## Installation
 
 ```bash
-npm install react-tui
+npm install boardkey
 ```
+
+Requires React 18 or newer. The package is ESM only.
 
 ## Quick Start
 
 ```tsx
-import { KeyboardProvider, useKeys } from 'react-tui';
+import { KeyboardProvider, useKeys } from 'boardkey'
 
 function App() {
   return (
     <KeyboardProvider>
-      <MyTUIApp />
+      <MyApp />
     </KeyboardProvider>
-  );
+  )
 }
 
-function MyTUIApp() {
-  const [count, setCount] = React.useState(0);
-  
+function MyApp() {
+  const [count, setCount] = React.useState(0)
+
   useKeys({
     'ctrl+s': () => console.log('Save!'),
-    'arrowup': () => setCount(c => c + 1),
-    'arrowdown': () => setCount(c => c - 1),
-    'escape': null, // NOOP - just prevent default
-  });
-  
-  return <div>Counter: {count}</div>;
+    arrowup: () => setCount((c) => c + 1),
+    arrowdown: () => setCount((c) => c - 1),
+    escape: null, // NOOP - just prevent default
+  })
+
+  return <div>Counter: {count}</div>
 }
 ```
 
@@ -47,7 +54,7 @@ function MyTUIApp() {
 
 ### KeyboardProvider
 
-The `KeyboardProvider` is the core of the TUI engine. It maintains:
+The `KeyboardProvider` is the core of the keyboard engine. It maintains:
 
 - **Registry**: A Map of all active keybindings
 - **nextEpoch**: A counter that increments for each new component registration (higher = higher priority)
@@ -68,31 +75,34 @@ useKeys(bindings: KeyMap, options?: { active?: boolean })
 ```
 
 **Key Format**: Keys are normalized to the format `[ctrl+][alt+][shift+]key`:
+
 - `"ctrl+s"` - Control/Command + S
 - `"alt+shift+arrowup"` - Alt + Shift + Arrow Up
 - `"enter"` - Enter key
 - `"escape"` - Escape key
 
 **Handler Types**:
+
 - Function: `(event: KeyboardEvent) => void` - Execute custom logic
 - `null` - NOOP (just prevent default browser behavior)
 
 **Example**:
+
 ```tsx
 function MyComponent() {
   useKeys({
     'ctrl+s': (e) => save(),
     'ctrl+q': (e) => quit(),
-    'escape': null, // Prevent default only
-  });
-  
-  return <div>My Component</div>;
+    escape: null, // Prevent default only
+  })
+
+  return <div>My Component</div>
 }
 ```
 
 ### Priority System (Epochs)
 
-When multiple components register the same keybinding, the TUI engine uses epochs to resolve conflicts:
+When multiple components register the same keybinding, the keyboard engine uses epochs to resolve conflicts:
 
 1. Each component gets a unique epoch when it mounts (higher numbers = mounted later)
 2. When a key is pressed, all matching handlers are found
@@ -106,24 +116,28 @@ The `useMute` hook enables "mute mode" for text inputs:
 
 ```tsx
 function TextInput() {
-  const [isEditing, setIsEditing] = useState(false);
-  
+  const [isEditing, setIsEditing] = useState(false)
+
   // Enable mute mode when editing
-  useMute(isEditing);
-  
-  useKeys({
-    'escape': () => setIsEditing(false),
-  }, { active: isEditing });
-  
+  useMute(isEditing)
+
+  useKeys(
+    {
+      escape: () => setIsEditing(false),
+    },
+    { active: isEditing },
+  )
+
   return isEditing ? (
     <input type="text" />
   ) : (
     <div onClick={() => setIsEditing(true)}>Click to edit</div>
-  );
+  )
 }
 ```
 
 When muted:
+
 - Only the component with the **highest epoch** can handle keys
 - This allows escape keys to work while typing
 - Regular typing goes to the input element
@@ -134,24 +148,21 @@ When muted:
 
 ```tsx
 interface KeyboardProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 ```
 
 ### useKeys
 
 ```tsx
-function useKeys(
-  bindings: KeyMap,
-  options?: UseKeysOptions
-): void
+function useKeys(bindings: KeyMap, options?: UseKeysOptions): void
 
 type KeyMap = {
-  [key: string]: ((event: KeyboardEvent) => void) | null;
+  [key: string]: ((event: KeyboardEvent) => void) | null
 }
 
 interface UseKeysOptions {
-  active?: boolean; // Default: true
+  active?: boolean // Default: true
 }
 ```
 
@@ -179,11 +190,11 @@ Normalizes a keyboard event to a standard string format.
 function Modal({ onClose }) {
   // Modal gets a higher epoch than parent
   useKeys({
-    'escape': onClose,
+    escape: onClose,
     'ctrl+w': onClose,
-  });
-  
-  return <div className="modal">Modal Content</div>;
+  })
+
+  return <div className="modal">Modal Content</div>
 }
 ```
 
@@ -191,28 +202,28 @@ function Modal({ onClose }) {
 
 ```tsx
 function App() {
-  const [showPanel, setShowPanel] = useState(false);
-  
+  const [showPanel, setShowPanel] = useState(false)
+
   useKeys({
     'ctrl+p': () => setShowPanel(true),
-  });
-  
+  })
+
   return (
     <div>
       Main App
       {showPanel && <SidePanel onClose={() => setShowPanel(false)} />}
     </div>
-  );
+  )
 }
 
 function SidePanel({ onClose }) {
   // Panel keys override app keys
   useKeys({
-    'escape': onClose,
+    escape: onClose,
     'ctrl+p': onClose, // Same key, but higher priority
-  });
-  
-  return <div>Side Panel</div>;
+  })
+
+  return <div>Side Panel</div>
 }
 ```
 
@@ -253,14 +264,27 @@ The `useKeys` hook stores bindings in a `useRef` to avoid re-registering the eve
 # Install dependencies
 npm install
 
+# Start the demo app in examples/demo-app
+npm run dev
+
 # Build
 npm run build
 
 # Run tests
 npm test
 
-# Lint
+# Lint and format
 npm run lint
+npm run format
+```
+
+## Releasing
+
+`publish.sh` installs, tests, bumps the version, builds, publishes to NPM and
+pushes the git tag:
+
+```bash
+./publish.sh patch   # or minor, or major
 ```
 
 ## License

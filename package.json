@@ -1,25 +1,49 @@
 {
-  "name": "react-tui",
+  "name": "boardkey",
+  "private": false,
   "version": "0.1.0",
-  "description": "A React-based Text User Interface (TUI) emulator with keyboard-driven navigation",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "description": "Keyboard handling for React: priority-based keybindings with nested scopes and a mute mode for text input",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "scripts": {
+    "dev": "./dev.sh",
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "test": "jest",
-    "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "react",
-    "tui",
     "keyboard",
-    "terminal"
+    "keybindings",
+    "shortcuts",
+    "hotkeys",
+    "keydown",
+    "tui"
   ],
-  "author": "",
+  "author": "Bouwe Westerdijk",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bouwe77/boardkey.git"
+  },
   "peerDependencies": {
-    "react": "^18.0.0"
+    "react": ">=18"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.0",
@@ -32,10 +56,10 @@
     "eslint": "^8.0.0",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
+    "prettier": "3.9.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.0"
-  },
-  "dependencies": {}
+  }
 }

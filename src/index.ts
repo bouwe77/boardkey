@@ -1,33 +1,34 @@
 /**
- * React TUI - A React-based Text User Interface (TUI) emulator
- * 
- * This library provides a keyboard-driven TUI engine for React applications.
- * 
+ * boardkey - Keyboard handling for React
+ *
+ * This library only handles keyboard input. It renders no UI and ships no styles.
+ *
  * @example
  * ```tsx
- * import { KeyboardProvider, useKeys } from 'react-tui';
- * 
+ * import { KeyboardProvider, useKeys } from 'boardkey';
+ *
  * function App() {
  *   return (
  *     <KeyboardProvider>
- *       <MyTUIApp />
+ *       <MyApp />
  *     </KeyboardProvider>
  *   );
  * }
- * 
- * function MyTUIApp() {
+ *
+ * function MyApp() {
  *   useKeys({
  *     'ctrl+s': () => console.log('Save!'),
  *     'escape': () => console.log('Cancel'),
  *   });
- *   
- *   return <div>My TUI Application</div>;
+ *
+ *   return <div>My app</div>;
  * }
  * ```
  */
 
-export { KeyboardProvider, useKeyboardContext } from './KeyboardProvider';
-export { useKeys } from './useKeys';
-export { useMute } from './useMute';
-export { getEventString } from './getEventString';
-export type { KeyMap, KeyHandler, UseKeysOptions, KeyboardContextValue, RegistryEntry } from './types';
+export { KeyboardProvider, useKeyboardContext } from './KeyboardProvider.js'
+export type { KeyboardProviderProps } from './KeyboardProvider.js'
+export { useKeys } from './useKeys.js'
+export { useMute } from './useMute.js'
+export { getEventString } from './getEventString.js'
+export type { KeyMap, KeyHandler, UseKeysOptions } from './types.js'

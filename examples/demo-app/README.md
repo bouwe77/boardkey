@@ -1,6 +1,6 @@
-# React TUI Demo Application
+# boardkey demo application
 
-This is a demonstration application showcasing the React TUI keyboard engine features.
+This is a demonstration application showcasing the boardkey keyboard engine features.
 
 ## Features Demonstrated
 

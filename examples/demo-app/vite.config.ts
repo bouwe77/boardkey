@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'react-tui': path.resolve(__dirname, '../../src'),
+      boardkey: path.resolve(__dirname, '../../src'),
     },
   },
-});
+})

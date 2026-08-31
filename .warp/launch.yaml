@@ -1,0 +1,12 @@
+---
+name: boardkey
+windows:
+  - tabs:
+      - title: 'boardkey: Dev'
+        layout:
+          split_direction: horizontal
+          panes:
+            - cwd: /Users/bouwe/dev-bouwe/boardkey
+              commands:
+                - exec: claude
+            - cwd: /Users/bouwe/dev-bouwe/boardkey
