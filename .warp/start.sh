@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 PROJECT_DIR="/Users/bouwe/dev-bouwe/boardkey"
-PROJECT_NAME="boardkey"
+PROJECT_NAME="Boardkey"
 WARP_CONFIG_DIR="$HOME/.warp/launch_configurations"
 
 # A Warp window is named after its active tab, and every tab in launch.yaml is
-# titled "boardkey: ...", so that prefix identifies our window. Needs Accessibility
+# titled "Boardkey: ...", so that prefix identifies our window. Needs Accessibility
 # permission for whichever app runs this script.
 focused=$(osascript <<'APPLESCRIPT' 2>/dev/null
 tell application "System Events" to tell process "Warp"
     repeat with w in windows
-        if name of w starts with "boardkey: " then
+        if name of w starts with "Boardkey: " then
             perform action "AXRaise" of w
             set frontmost to true
             return "yes"

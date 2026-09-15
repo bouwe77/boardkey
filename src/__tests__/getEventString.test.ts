@@ -1,21 +1,8 @@
 import { getEventString } from '../getEventString.js'
 
 describe('getEventString', () => {
-  const createKeyboardEvent = (options: {
-    key: string
-    ctrlKey?: boolean
-    altKey?: boolean
-    shiftKey?: boolean
-    metaKey?: boolean
-  }): KeyboardEvent => {
-    return {
-      key: options.key,
-      ctrlKey: options.ctrlKey || false,
-      altKey: options.altKey || false,
-      shiftKey: options.shiftKey || false,
-      metaKey: options.metaKey || false,
-    } as KeyboardEvent
-  }
+  const createKeyboardEvent = (options: KeyboardEventInit) =>
+    new KeyboardEvent('keydown', options)
 
   it('should normalize a simple key', () => {
     const event = createKeyboardEvent({ key: 'a' })

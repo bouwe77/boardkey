@@ -117,4 +117,126 @@ describe('useMute', () => {
     fireEvent.change(input, { target: { value: 'hello' } })
     expect(input.value).toBe('hello')
   })
+
+  it('should stay muted until the last muting component is gone', () => {
+    const appHandler = jest.fn()
+
+    function AppKeys() {
+      useKeys({ a: appHandler })
+      return <div>App</div>
+    }
+
+    function TextInput() {
+      useMute()
+      useKeys({ escape: jest.fn() })
+      return <input type="text" />
+    }
+
+    function Modal() {
+      useMute()
+      useKeys({ escape: jest.fn() })
+      return <div>Modal</div>
+    }
+
+    // A modal on top of a text input: both are muted
+    const { rerender } = render(
+      <KeyboardProvider>
+        <AppKeys />
+        <TextInput />
+        <Modal />
+      </KeyboardProvider>,
+    )
+
+    fireEvent.keyDown(window, { key: 'a' })
+    expect(appHandler).not.toHaveBeenCalled()
+
+    // Closing the modal must not unmute: the input is still open
+    rerender(
+      <KeyboardProvider>
+        <AppKeys />
+        <TextInput />
+      </KeyboardProvider>,
+    )
+
+    fireEvent.keyDown(window, { key: 'a' })
+    expect(appHandler).not.toHaveBeenCalled()
+  })
+
+  it('should not let a re-activated app outrank a muted input', () => {
+    const appHandler = jest.fn()
+
+    // Mirrors the demo: app keys switch off while the modal is open
+    function AppKeys({ showModal }: { showModal: boolean }) {
+      useKeys({ h: appHandler }, { active: !showModal })
+      return <div>App</div>
+    }
+
+    function TextInput() {
+      useMute()
+      useKeys({ escape: jest.fn() })
+      return <input type="text" />
+    }
+
+    function Modal() {
+      useMute()
+      useKeys({ escape: jest.fn() })
+      return <div>Modal</div>
+    }
+
+    const { rerender } = render(
+      <KeyboardProvider>
+        <AppKeys showModal={true} />
+        <TextInput />
+        <Modal />
+      </KeyboardProvider>,
+    )
+
+    // Closing the modal re-activates the app keys, but the input still owns the
+    // keyboard, so a letter must not trigger an app binding
+    rerender(
+      <KeyboardProvider>
+        <AppKeys showModal={false} />
+        <TextInput />
+      </KeyboardProvider>,
+    )
+
+    fireEvent.keyDown(window, { key: 'h' })
+    expect(appHandler).not.toHaveBeenCalled()
+  })
+
+  it('should rank a muted child above its own parent', () => {
+    const parentHandler = jest.fn()
+    const escapeHandler = jest.fn()
+
+    // The child mounts together with the parent, so nothing but render order
+    // decides who wins
+    function Parent() {
+      useKeys({ h: parentHandler })
+      return (
+        <div>
+          Parent
+          <TextInput />
+        </div>
+      )
+    }
+
+    function TextInput() {
+      useMute()
+      useKeys({ escape: escapeHandler })
+      return <input type="text" />
+    }
+
+    render(
+      <KeyboardProvider>
+        <Parent />
+      </KeyboardProvider>,
+    )
+
+    // The input owns the keyboard, so 'h' is a letter, not a shortcut
+    fireEvent.keyDown(window, { key: 'h' })
+    expect(parentHandler).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(escapeHandler).toHaveBeenCalledTimes(1)
+  })
 })

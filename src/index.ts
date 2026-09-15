@@ -26,9 +26,12 @@
  * ```
  */
 
-export { KeyboardProvider, useKeyboardContext } from './KeyboardProvider.js'
-export type { KeyboardProviderProps } from './KeyboardProvider.js'
+export { KeyboardProvider, useIsMuted } from './KeyboardProvider.js'
+export type {
+  KeyboardProviderProps,
+  KeyMap,
+  KeyHandler,
+} from './KeyboardProvider.js'
 export { useKeys } from './useKeys.js'
+export type { UseKeysOptions } from './useKeys.js'
 export { useMute } from './useMute.js'
-export { getEventString } from './getEventString.js'
-export type { KeyMap, KeyHandler, UseKeysOptions } from './types.js'

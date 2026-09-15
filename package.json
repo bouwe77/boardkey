@@ -18,10 +18,11 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "dev": "./dev.sh",
+    "dev": "npm run dev --prefix examples",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "jest",
+    "preversion": "npm test",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -46,10 +47,8 @@
     "react": ">=18"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^14.1.0",
     "@types/jest": "^29.5.0",
-    "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

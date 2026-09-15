@@ -58,7 +58,9 @@ The `KeyboardProvider` is the core of the keyboard engine. It maintains:
 
 - **Registry**: A Map of all active keybindings
 - **nextEpoch**: A counter that increments for each new component registration (higher = higher priority)
-- **isMuted**: A flag to enable "mute mode" for text inputs
+- **isMuted**: Whether "mute mode" is on for text inputs. It is on while at
+  least one component asks for it, so a modal on top of a text input does not
+  unmute the input when it closes.
 
 ```tsx
 <KeyboardProvider>
@@ -108,7 +110,14 @@ When multiple components register the same keybinding, the keyboard engine uses 
 2. When a key is pressed, all matching handlers are found
 3. The handler with the highest epoch wins
 
-This naturally handles nested components - a modal opened later will have priority over the parent.
+Epochs are claimed while rendering, which runs from parent to child, so a nested
+component always ranks above its ancestors. A modal opened later ranks above
+everything that was already there.
+
+The epoch is claimed once per mount, so `active` does not affect priority. A
+component that switches its bindings off and on again keeps its original epoch,
+and does not jump above components that stayed active. Only mounting grants a
+new, higher epoch.
 
 ### useMute Hook
 
@@ -149,8 +158,22 @@ When muted:
 ```tsx
 interface KeyboardProviderProps {
   children: React.ReactNode
+  onUnhandled?: (key: string, event: KeyboardEvent) => void
 }
 ```
+
+`onUnhandled` is called when a key is pressed that no active registration
+handles, with the normalized key string (e.g. `"ctrl+s"`). Use it for debugging,
+or to tell the user a key does nothing:
+
+```tsx
+<KeyboardProvider onUnhandled={(key) => console.log(`${key} does nothing`)}>
+  <YourApp />
+</KeyboardProvider>
+```
+
+It is not called while muted, because a text input owns the keyboard then: those
+keys are being typed, not left unhandled.
 
 ### useKeys
 
@@ -174,15 +197,16 @@ function useMute(active?: boolean): void
 
 Enables "mute mode" when `active` is true (default). In mute mode, only the component with the highest epoch can handle keyboard events.
 
-### getEventString
+### useIsMuted
 
 ```tsx
-function getEventString(event: KeyboardEvent): string
+function useIsMuted(): boolean
 ```
 
-Normalizes a keyboard event to a standard string format.
+Whether mute mode is on, so a text input owns the keyboard. Useful for showing
+or hiding a shortcut hint.
 
-## Examples
+## Usage patterns
 
 ### Modal Dialog
 
@@ -231,7 +255,7 @@ function SidePanel({ onClose }) {
 
 ### Key Normalization
 
-The `getEventString` function converts browser KeyboardEvents to a consistent format:
+Internally, every KeyboardEvent is converted to a consistent format:
 
 ```
 [ctrl+][alt+][shift+]key
@@ -258,13 +282,28 @@ The `useKeys` hook stores bindings in a `useRef` to avoid re-registering the eve
 - ✅ Always calls the latest version of handlers
 - ✅ No stale closures
 
+## Examples
+
+One app in `examples/` serves both examples. The header switches between them,
+and each one has its own URL.
+
+- [`examples/hangman`](examples/hangman) (`/hangman`) — a game of hangman.
+  Familiar rules, so the keyboard behaviour is the only new thing: 26 letter
+  bindings that disappear as you use them, a muted text input for guessing the
+  whole word, and modals that outrank the board.
+- [`examples/demo-app`](examples/demo-app) (`/demo`) — the bare mechanics: a
+  counter, a modal and a text input, with no game around them.
+
+Run them with `npm run dev` or `./dev.sh`. Both log what boardkey does to the
+browser console.
+
 ## Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Start the demo app in examples/demo-app
+# Start the example app (see Examples above)
 npm run dev
 
 # Build
