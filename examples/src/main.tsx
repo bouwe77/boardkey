@@ -4,12 +4,14 @@ import { KeyboardProvider, useKeys } from 'boardkey'
 import Sandbox from '../sandbox/src/App'
 import Hangman from '../hangman/src/App'
 import Tui from '../tui/src/App'
+import Vi from '../vi/src/App'
 
 // The nicest one first: it is also what an unknown path falls back to
 const EXAMPLES = [
   { path: '/tui', label: 'tui', key: 'f1', Component: Tui },
   { path: '/hangman', label: 'hangman', key: 'f2', Component: Hangman },
   { path: '/sandbox', label: 'sandbox', key: 'f3', Component: Sandbox },
+  { path: '/vi', label: 'vi', key: 'f4', Component: Vi },
 ]
 
 function App() {
