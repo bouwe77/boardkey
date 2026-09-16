@@ -2,7 +2,10 @@
   "compilerOptions": {
     "target": "ES2020",
     "baseUrl": ".",
-    "paths": { "boardkey": ["../src"] },
+    "paths": {
+      "boardkey": ["../src"],
+      "boardkey/tui": ["../src/tui"]
+    },
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -18,5 +21,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "demo-app/src", "hangman/src"]
+  "include": ["src", "sandbox/src", "hangman/src", "tui/src"]
 }

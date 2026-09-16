@@ -242,11 +242,11 @@ function App() {
               fontSize: '32px',
             }}
           >
-            ⌨️ boardkey demo
+            ⌨️ boardkey sandbox
           </h1>
           <p style={{ color: '#858585', fontSize: '14px' }}>
-            Keyboard handling for React: priority-based keybindings with nested
-            scopes and a mute mode for text input
+            A test bench, not a showcase: odd cases tried in a real browser, to
+            find the edges before a user does
           </p>
         </div>
 
