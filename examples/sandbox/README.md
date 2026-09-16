@@ -9,6 +9,11 @@ What it covers today: a counter on the arrow keys, a modal that takes the same
 keys over, and a text input that mutes the app while you type. Open the browser
 console to follow which component owns the keyboard.
 
+The same modal opens two ways, to show what mute changes. **M** opens it muted
+and **N** opens it unmuted. Neither one binds ←/→. Muted, those keys do nothing,
+because a muted component stops every key, not only the ones it binds. Unmuted,
+they still change the app counter behind the modal, because epochs work per key.
+
 New odd cases belong here. For what boardkey is meant to look like in a real
 app, see the [TUI](../tui) and [hangman](../hangman) examples.
 

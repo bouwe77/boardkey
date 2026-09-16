@@ -81,9 +81,19 @@ function TextInput({
   )
 }
 
-function Modal({ onClose }: { onClose: () => void }) {
-  // A modal owns the keyboard while it is open
-  useMute()
+function Modal({
+  onClose,
+  muted,
+  appCount,
+}: {
+  onClose: () => void
+  muted: boolean
+  appCount: number
+}) {
+  // Muted, this modal owns the whole keyboard: keys it does not bind stop here
+  // too. Unmuted, it only owns the keys it binds, and the rest still reach the
+  // app behind it.
+  useMute(muted)
 
   // Its own counter, on the same keys the main app uses
   const [count, setCount] = useState(0)
@@ -131,11 +141,14 @@ function Modal({ onClose }: { onClose: () => void }) {
         }}
       >
         <h2 style={{ margin: '0 0 15px 0', color: '#0078d4' }}>
-          🪟 Modal Dialog
+          🪟 Modal Dialog {muted ? '(muted)' : '(not muted)'}
         </h2>
         <p style={{ marginBottom: '15px' }}>
-          This modal has a higher epoch than the main app, so it captures
-          keyboard events first.
+          This modal has a higher epoch than the main app, so it gets the keys
+          first.{' '}
+          {muted
+            ? 'It also calls useMute, so every other key stops here, even the ones it does not bind.'
+            : 'It does not call useMute, so the keys it does not bind still reach the app behind it.'}
         </p>
         <div
           style={{
@@ -153,6 +166,23 @@ function Modal({ onClose }: { onClose: () => void }) {
           <div style={{ fontSize: '12px', color: '#858585' }}>
             <strong>Try it:</strong> ↑/↓ change this counter, not the one in the
             main app.
+          </div>
+          <div
+            style={{
+              marginTop: '10px',
+              paddingTop: '10px',
+              borderTop: '1px solid #3794ff',
+              fontSize: '12px',
+              color: '#858585',
+            }}
+          >
+            App counter:{' '}
+            <strong style={{ color: '#ce9178' }}>{appCount}</strong>
+            <br />
+            This modal does not bind ←/→.{' '}
+            {muted
+              ? 'Muted, they do nothing at all.'
+              : 'Unmuted, they still change the app counter by 10, from here.'}
           </div>
         </div>
         <div style={{ marginTop: '15px', fontSize: '12px', color: '#858585' }}>
@@ -185,8 +215,9 @@ function Modal({ onClose }: { onClose: () => void }) {
 
 function App() {
   const [count, setCount] = useState(0)
-  const [showModal, setShowModal] = useState(false)
+  const [modal, setModal] = useState<'muted' | 'plain' | null>(null)
   const [showInput, setShowInput] = useState(false)
+  const [showHelp, setShowHelp] = useState(true)
   const [entries, setEntries] = useState<string[]>([])
 
   // Log every mute transition, so you can see which component owns the keyboard
@@ -212,16 +243,28 @@ function App() {
       setCount((c) => c - 1)
       console.log('⬇️ Count decreased')
     },
+    arrowright: () => {
+      setCount((c) => c + 10)
+      console.log('➡️ Count increased by 10')
+    },
+    arrowleft: () => {
+      setCount((c) => c - 10)
+      console.log('⬅️ Count decreased by 10')
+    },
     m: () => {
-      setShowModal(true)
-      console.log('🪟 Modal opened (M)')
+      setModal('muted')
+      console.log('🪟 Muted modal opened (M)')
+    },
+    n: () => {
+      setModal('plain')
+      console.log('🪟 Unmuted modal opened (N)')
     },
     e: () => {
       setShowInput(true)
       console.log('📝 Input activated (E)')
     },
-    h: () => console.log('❓ Help triggered (H)'),
-    '?': () => console.log('❓ Help triggered (?)'),
+    h: () => setShowHelp((show) => !show),
+    '?': () => setShowHelp((show) => !show),
   })
 
   return (
@@ -250,61 +293,68 @@ function App() {
           </p>
         </div>
 
-        <div
-          style={{
-            padding: '20px',
-            background: '#252526',
-            marginBottom: '30px',
-            border: '2px solid #3794ff',
-          }}
-        >
-          <h3 style={{ margin: '0 0 15px 0', color: '#3794ff' }}>
-            ⌨️ Keyboard Commands:
-          </h3>
+        {showHelp && (
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '10px',
+              padding: '20px',
+              background: '#252526',
+              marginBottom: '30px',
+              border: '2px solid #3794ff',
             }}
           >
-            <div>
-              <strong style={{ color: '#4ec9b0' }}>↑/↓</strong> -
-              Increase/decrease counter
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>M</strong> - Open modal
-              dialog
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>E</strong> - Activate text
-              input
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>H</strong> or{' '}
-              <strong style={{ color: '#4ec9b0' }}>?</strong> - Show help
+            <h3 style={{ margin: '0 0 15px 0', color: '#3794ff' }}>⌨️ Help:</h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
+              }}
+            >
+              <div>
+                <strong style={{ color: '#4ec9b0' }}>↑/↓</strong> -
+                Increase/decrease counter by 1
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>←/→</strong> -
+                Increase/decrease counter by 10
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>M</strong> - Open the muted
+                modal
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>N</strong> - Open the same
+                modal without mute
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>E</strong> - Activate text
+                input
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>H</strong> or{' '}
+                <strong style={{ color: '#4ec9b0' }}>?</strong> - Toggle help
+              </div>
+              <div>
+                <strong style={{ color: '#4ec9b0' }}>Ctrl+S</strong> - Save
+                (logged)
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>Ctrl+Q</strong> - Quit
+                (logged)
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>ESC</strong> - Close
+                modal/input
+                <br />
+                <strong style={{ color: '#4ec9b0' }}>Ctrl+W</strong> - Close
+                modal
+              </div>
             </div>
-            <div>
-              <strong style={{ color: '#4ec9b0' }}>Ctrl+S</strong> - Save
-              (logged)
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>Ctrl+Q</strong> - Quit
-              (logged)
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>ESC</strong> - Close
-              modal/input
-              <br />
-              <strong style={{ color: '#4ec9b0' }}>Ctrl+W</strong> - Close modal
-            </div>
+            <p
+              style={{
+                margin: '15px 0 0 0',
+                fontSize: '12px',
+                color: '#858585',
+              }}
+            >
+              Any other key is logged to the browser console as unhandled, so
+              you can see what boardkey passes on to the browser.
+            </p>
           </div>
-          <p
-            style={{
-              margin: '15px 0 0 0',
-              fontSize: '12px',
-              color: '#858585',
-            }}
-          >
-            Any other key is logged to the browser console as unhandled, so you
-            can see what boardkey passes on to the browser.
-          </p>
-        </div>
+        )}
 
         <div style={{ marginBottom: '30px' }}>
           <h3 style={{ color: '#ce9178', marginBottom: '10px' }}>
@@ -330,7 +380,7 @@ function App() {
                 margin: '10px 0 0 0',
               }}
             >
-              Use ↑/↓ arrow keys to change the counter
+              Use ↑/↓ to change the counter by 1, ←/→ by 10
             </p>
           </div>
         </div>
@@ -350,7 +400,7 @@ function App() {
               console.log('📝 Input closed')
             }}
             onOpenModal={() => {
-              setShowModal(true)
+              setModal('muted')
               console.log('🪟 Modal opened on top of the input (Ctrl+K)')
             }}
             onSubmit={(text) => {
@@ -386,10 +436,12 @@ function App() {
         </div>
       </main>
 
-      {showModal && (
+      {modal && (
         <Modal
+          muted={modal === 'muted'}
+          appCount={count}
           onClose={() => {
-            setShowModal(false)
+            setModal(null)
             console.log('🪟 Modal closed')
           }}
         />

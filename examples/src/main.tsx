@@ -10,8 +10,8 @@ import Vi from '../vi/src/App'
 const EXAMPLES = [
   { path: '/tui', label: 'tui', key: 'f1', Component: Tui },
   { path: '/hangman', label: 'hangman', key: 'f2', Component: Hangman },
-  { path: '/sandbox', label: 'sandbox', key: 'f3', Component: Sandbox },
-  { path: '/vi', label: 'vi', key: 'f4', Component: Vi },
+  { path: '/vi', label: 'vi', key: 'f3', Component: Vi },
+  { path: '/sandbox', label: 'sandbox', key: 'f4', Component: Sandbox },
 ]
 
 function App() {

@@ -137,6 +137,49 @@ component that switches its bindings off and on again keeps its original epoch,
 and does not jump above components that stayed active. Only mounting grants a
 new, higher epoch.
 
+### When do I need `active`?
+
+Epochs always resolve a conflict, on their own. The question is only whether
+mount order is the answer you wanted.
+
+**Stacking: the library handles it.** A modal, a panel or a dialog mounts later,
+or sits deeper in the tree, so it gets a higher epoch than the screen behind it.
+Mount order is exactly the intent here. Write your bindings and do nothing else.
+
+**Siblings: you handle it.** Two components are on screen at the same time and
+both bind `arrowup` — a sidebar and a main list, say. The epoch still decides,
+but by mount order, which means nothing here: whichever rendered first loses
+every time, even when the user is working in it. The library cannot know which
+one counts right now, so you tell it:
+
+```tsx
+<Sidebar active={focus === 'sidebar'} />
+<MainList active={focus === 'list'} />
+```
+
+```tsx
+function Sidebar({ active }) {
+  useKeys({ arrowup: up, arrowdown: down }, { active })
+}
+```
+
+Use `active` for the same reason when a component has modes, and its keys only
+make sense in one of them.
+
+**Takeover is per key, not per component.** A component higher up the stack only
+takes over the keys it actually lists. A modal that binds `escape` does not stop
+`arrowup` from reaching the screen behind it. If you want a key to stop there,
+bind it to `null`: that counts as handled and goes no further.
+
+It is also per `useKeys` call, not per component. Two calls in one component are
+two registrations, each with its own epoch and its own `active` flag.
+
+**Mute is the exception.** While a component calls `useMute`, only the
+highest-epoch registration is checked at all. Keys it does not bind stop there
+too, instead of falling through. So mute takes over the whole keyboard, and
+epochs alone take over only the listed keys. Use mute when a text input needs
+every key; use plain epochs when the layers below should keep their own.
+
 ### useMute Hook
 
 The `useMute` hook enables "mute mode" for text inputs:
