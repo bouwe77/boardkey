@@ -1,4 +1,4 @@
-import { getEventString } from '../getEventString.js'
+import { getEventString } from './getEventString.js'
 
 describe('getEventString', () => {
   const createKeyboardEvent = (options: KeyboardEventInit) =>

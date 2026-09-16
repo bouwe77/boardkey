@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
-import { KeyboardProvider, useKeys, useMute } from '../index.js'
+import { KeyboardProvider, useKeys, useMute } from './index.js'
 
 describe('useMute', () => {
   it('should enable mute mode on mount and disable on unmount', () => {
