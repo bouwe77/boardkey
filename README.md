@@ -88,6 +88,11 @@ useKeys(bindings: KeyMap, options?: { active?: boolean })
 - Function: `(event: KeyboardEvent) => void` - Execute custom logic
 - `null` - NOOP (just prevent default browser behavior)
 
+A key set to `null` still counts as handled: it stops there, so it never reaches
+a component with a lower epoch and never reaches the browser. Leaving the key
+out of the map is the opposite: the key falls through to the next component that
+does bind it, or to the browser if nobody does.
+
 **Example**:
 
 ```tsx
@@ -102,6 +107,16 @@ function MyComponent() {
 }
 ```
 
+One call handles as many keys as you like, so a component normally needs only
+one. Use a second call when a group of keys has its own `active` flag:
+
+```tsx
+function Screen({ open }) {
+  useKeys({ o: openDialog }, { active: !open })
+  useKeys({ arrowup: up, arrowdown: down })
+}
+```
+
 ### Priority System (Epochs)
 
 When multiple components register the same keybinding, the keyboard engine uses epochs to resolve conflicts:
@@ -113,6 +128,9 @@ When multiple components register the same keybinding, the keyboard engine uses 
 Epochs are claimed while rendering, which runs from parent to child, so a nested
 component always ranks above its ancestors. A modal opened later ranks above
 everything that was already there.
+
+Each `useKeys` call claims its own epoch, not each component. Two calls in the
+same component are two registrations, and the second one ranks above the first.
 
 The epoch is claimed once per mount, so `active` does not affect priority. A
 component that switches its bindings off and on again keeps its original epoch,
@@ -282,19 +300,37 @@ The `useKeys` hook stores bindings in a `useRef` to avoid re-registering the eve
 - ✅ Always calls the latest version of handlers
 - ✅ No stale closures
 
+## TUI components
+
+If you like the keyboard-first feel, `boardkey/tui` ships a small set of retro
+terminal-style components built on these hooks: a panel, a list box and a
+modal, each with its keys already wired. A modal outranks the screen behind it
+for free, because it is the same registry and the same epochs.
+
+```tsx
+import { Panel, ListBox, Modal } from 'boardkey/tui'
+```
+
+It is a separate entry point, so it costs nothing if you do not use it. See
+[`src/tui/README.md`](src/tui/README.md).
+
 ## Examples
 
-One app in `examples/` serves both examples. The header switches between them,
-and each one has its own URL.
+One app in `examples/` serves every example. The header switches between them,
+with a function key or the mouse, and each one has its own URL.
 
+- [`examples/tui`](examples/tui) (`/tui`) — the components from
+  [`boardkey/tui`](src/tui/README.md), with a sidebar for changing their
+  colours.
 - [`examples/hangman`](examples/hangman) (`/hangman`) — a game of hangman.
   Familiar rules, so the keyboard behaviour is the only new thing: 26 letter
   bindings that disappear as you use them, a muted text input for guessing the
   whole word, and modals that outrank the board.
-- [`examples/demo-app`](examples/demo-app) (`/demo`) — the bare mechanics: a
-  counter, a modal and a text input, with no game around them.
+- [`examples/sandbox`](examples/sandbox) (`/sandbox`) — not a showcase but a
+  test bench: odd cases and edge cases, tried in a real browser. A counter, a
+  modal and a text input for now, and whatever else needs checking later.
 
-Run them with `npm run dev` or `./dev.sh`. Both log what boardkey does to the
+Run them with `npm run dev` or `./dev.sh`. They log what boardkey does to the
 browser console.
 
 ## Development

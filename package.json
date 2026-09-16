@@ -11,15 +11,20 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./tui": {
+      "types": "./dist/tui/index.d.ts",
+      "import": "./dist/tui/index.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src/tui/README.md"
   ],
   "sideEffects": false,
   "scripts": {
     "dev": "npm run dev --prefix examples",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "build:watch": "tsc --watch",
     "test": "jest",
     "preversion": "npm test",
