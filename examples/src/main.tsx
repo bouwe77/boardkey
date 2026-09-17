@@ -5,6 +5,7 @@ import Sandbox from '../sandbox/src/App'
 import Hangman from '../hangman/src/App'
 import Tui from '../tui/src/App'
 import Vi from '../vi/src/App'
+import Slides from '../slides/src/App'
 
 // The nicest one first: it is also what an unknown path falls back to
 const EXAMPLES = [
@@ -12,6 +13,8 @@ const EXAMPLES = [
   { path: '/hangman', label: 'hangman', key: 'f2', Component: Hangman },
   { path: '/vi', label: 'vi', key: 'f3', Component: Vi },
   { path: '/sandbox', label: 'sandbox', key: 'f4', Component: Sandbox },
+  // The talk itself, not a demo: reachable with F5, but not in the header
+  { path: '/slides', label: 'slides', key: 'f5', Component: Slides, hidden: true },
 ]
 
 function App() {
@@ -56,7 +59,7 @@ function App() {
         <strong style={{ marginRight: '20px', color: '#569cd6' }}>
           boardkey demos
         </strong>
-        {EXAMPLES.map((e) => (
+        {EXAMPLES.filter((e) => !e.hidden).map((e) => (
           <a
             key={e.path}
             href={e.path}
