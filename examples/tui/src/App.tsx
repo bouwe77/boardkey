@@ -23,7 +23,7 @@ function Screen() {
   const [open, setOpen] = useState(true)
   const [modal, setModal] = useState(false)
   // Hides everything that explains the demo, leaving only the demo itself
-  const [zen, setZen] = useState(false)
+  const [zen, setZen] = useState(true)
 
   // Two list boxes at once, so the app has to say which one owns the arrow
   // keys. Epochs cannot decide this: they rank by mount order, not by focus.
