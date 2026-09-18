@@ -21,5 +21,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "sandbox/src", "hangman/src", "tui/src", "vi/src"]
+  "include": [
+    "src",
+    "sandbox/src",
+    "hangman/src",
+    "tui/src",
+    "vi/src",
+    "slides/src"
+  ]
 }

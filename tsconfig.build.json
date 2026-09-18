@@ -1,0 +1,5 @@
+{
+  // What npm run build compiles: the library only, no tests in dist/
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.test.tsx"]
+}

@@ -16,5 +16,7 @@
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.test.tsx"]
+  // The tests belong to the project, so the editor type-checks them too. The
+  // build leaves them out through tsconfig.build.json.
+  "exclude": ["node_modules", "dist"]
 }
