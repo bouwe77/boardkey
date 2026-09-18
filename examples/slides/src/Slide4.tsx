@@ -65,9 +65,9 @@ export default function Slide4() {
     <div style={{ width: 'min(1200px, 92vw)' }}>
       <h1 style={{ color: '#569cd6' }}>Example</h1>
       <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
+        {/* Left aligned, so the counter stays put when the code appears */}
         <div style={{ flex: 1, fontSize: '30px', lineHeight: 2 }}>
-          Just call <span style={{ color: colors.hook }}>useKeys</span>
-          <div style={{ marginTop: '50px', textAlign: 'center' }}>
+          <div style={{ marginTop: '50px' }}>
             <div>
               <Counter />
             </div>
@@ -79,20 +79,24 @@ export default function Slide4() {
           </div>
         </div>
         {showCode && (
-          <pre
-            style={{
-              flex: 1,
-              margin: 0,
-              padding: '20px',
-              background: '#252526',
-              border: '1px solid #3a3a3a',
-              fontSize: '15px',
-              lineHeight: 1.6,
-              overflowX: 'auto',
-            }}
-          >
-            {CODE}
-          </pre>
+          <div style={{ flex: 1 }}>
+            <p style={{ margin: '0 0 16px', fontSize: '30px' }}>
+              Just call <span style={{ color: colors.hook }}>useKeys</span>
+            </p>
+            <pre
+              style={{
+                margin: 0,
+                padding: '20px',
+                background: '#252526',
+                border: '1px solid #3a3a3a',
+                fontSize: '15px',
+                lineHeight: 1.6,
+                overflowX: 'auto',
+              }}
+            >
+              {CODE}
+            </pre>
+          </div>
         )}
       </div>
     </div>
