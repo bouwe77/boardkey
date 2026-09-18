@@ -9,7 +9,7 @@ export const colors = {
 }
 
 // The only thing worth highlighting: the library is these two calls
-const HOOKS = /(useKeys|useMute)/
+const HOOKS = 'useKeys|useMute'
 
 /**
  * A block of sample code. Everything is plain, except the boardkey hooks.
@@ -19,10 +19,15 @@ const HOOKS = /(useKeys|useMute)/
 export default function Code({
   children,
   fontSize = '22px',
+  mark,
 }: {
   children: string
   fontSize?: string
+  /** One more word to highlight, when that word is the point of the slide */
+  mark?: string
 }) {
+  const pattern = new RegExp(`(${mark ? `${HOOKS}|${mark}` : HOOKS})`)
+
   return (
     <pre
       style={{
@@ -35,8 +40,8 @@ export default function Code({
         overflowX: 'auto',
       }}
     >
-      {children.split(HOOKS).map((part, i) =>
-        HOOKS.test(part) ? (
+      {children.split(pattern).map((part, i) =>
+        pattern.test(part) ? (
           <span key={i} style={{ color: colors.hook, fontWeight: 'bold' }}>
             {part}
           </span>

@@ -57,41 +57,43 @@ const CODE = (
 )
 
 export default function Slide4() {
+  const [showCode, setShowCode] = useState(false)
+
+  useKeys({ c: () => setShowCode((on) => !on) })
+
   return (
     <div style={{ width: 'min(1200px, 92vw)' }}>
-      <h1 style={{ color: '#569cd6' }}>This is how you use it</h1>
+      <h1 style={{ color: '#569cd6' }}>Example</h1>
       <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
         <div style={{ flex: 1, fontSize: '30px', lineHeight: 2 }}>
-          <ul style={{ margin: 0, paddingLeft: '30px' }}>
-            <li>
-              Just call <span style={{ color: colors.hook }}>useKeys</span>
-            </li>
-            <li>Give it keys</li>
-            <li>And what each key should do</li>
-          </ul>
+          Just call <span style={{ color: colors.hook }}>useKeys</span>
           <div style={{ marginTop: '50px', textAlign: 'center' }}>
             <div>
               <Counter />
             </div>
             <Hint fontSize="18px">
               <Key>↑</Key> <Key>↓</Key> to count up and down
+              <br />
+              <Key>c</Key> for the code
             </Hint>
           </div>
         </div>
-        <pre
-          style={{
-            flex: 1,
-            margin: 0,
-            padding: '20px',
-            background: '#252526',
-            border: '1px solid #3a3a3a',
-            fontSize: '15px',
-            lineHeight: 1.6,
-            overflowX: 'auto',
-          }}
-        >
-          {CODE}
-        </pre>
+        {showCode && (
+          <pre
+            style={{
+              flex: 1,
+              margin: 0,
+              padding: '20px',
+              background: '#252526',
+              border: '1px solid #3a3a3a',
+              fontSize: '15px',
+              lineHeight: 1.6,
+              overflowX: 'auto',
+            }}
+          >
+            {CODE}
+          </pre>
+        )}
       </div>
     </div>
   )

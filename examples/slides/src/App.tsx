@@ -10,6 +10,7 @@ import Slide7 from './Slide7'
 import Slide8 from './Slide8'
 import Slide9 from './Slide9'
 import Slide10 from './Slide10'
+import Slide11 from './Slide11'
 import KeyCast from './KeyCast'
 
 const SLIDES = [
@@ -23,6 +24,7 @@ const SLIDES = [
   Slide8,
   Slide9,
   Slide10,
+  Slide11,
 ]
 
 function Deck() {

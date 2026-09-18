@@ -1,9 +1,9 @@
 import { colors } from './Code'
 
-export default function Slide10() {
+export default function Slide11() {
   return (
     <h1 style={{ fontSize: '80px', margin: 0, color: colors.hook }}>
-      More demos
+      k tx bye
     </h1>
   )
 }

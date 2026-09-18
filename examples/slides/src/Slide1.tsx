@@ -8,9 +8,7 @@ export default function Slide1() {
         boardkey? just keyboard, reversed
       </p>
       <p style={{ fontSize: '26px', marginTop: '60px', lineHeight: 1.5 }}>
-        A React library for giving your components
-        <br />
-        keyboard interactivity.
+        Keyboard interactivity for React components
       </p>
     </div>
   )

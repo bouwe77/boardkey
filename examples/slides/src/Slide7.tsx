@@ -73,15 +73,14 @@ export default function Slide7() {
   const [note, setNote] = useState('')
   const [open, setOpen] = useState(false)
 
-  useKeys(
-    {
-      r: () => setColor(PAINT.r),
-      g: () => setColor(PAINT.g),
-      b: () => setColor(PAINT.b),
-      m: () => setOpen(true),
-    },
-    { active: !open },
-  )
+  // No active flag needed: the modal mutes, so none of these can fire while
+  // it is open, not even m
+  useKeys({
+    r: () => setColor(PAINT.r),
+    g: () => setColor(PAINT.g),
+    b: () => setColor(PAINT.b),
+    m: () => setOpen(true),
+  })
 
   return (
     <div
